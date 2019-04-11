@@ -3,65 +3,65 @@
 ; ----------------------------------------------------------------------------------------- ;
 
 (deffacts Habitaciones
-	(Habitacion Salon)
-	(Habitacion Cocina)
-	(Habitacion Entrada)
-	(Habitacion Pasillo)
-	(Habitacion Banio)
-	(Habitacion Dormitorio1)
-	(Habitacion Dormitorio2)
-	(Habitacion Dormitorio3)
+	(Habitacion salon)
+	(Habitacion cocina)
+	(Habitacion entrada)
+	(Habitacion pasillo)
+	(Habitacion banio)
+	(Habitacion dormitorio1)
+	(Habitacion dormitorio2)
+	(Habitacion dormitorio3)
 )
 
 
 (deffacts Estado
-	(Estado Salon Inactivo 0)
-	(Estado Cocina Inactivo 0)
-	(Estado Entrada Inactivo 0)
-	(Estado Pasillo Inactivo 0)
-	(Estado Banio Inactivo 0)
-	(Estado Dormitorio1 Inactivo 0)
-	(Estado Dormitorio2 Inactivo 0)
-	(Estado Dormitorio3 Inactivo 0)
+	(Estado salon inactivo 0)
+	(Estado cocina inactivo 0)
+	(Estado entrada inactivo 0)
+	(Estado pasillo inactivo 0)
+	(Estado banio inactivo 0)
+	(Estado dormitorio1 inactivo 0)
+	(Estado dormitorio2 inactivo 0)
+	(Estado dormitorio3 inactivo 0)
 )
 
 
 (deffacts accion
-	(accion pulsador_luz Salon apagar)
-	(accion pulsador_luz Cocina apagar)
-	(accion pulsador_luz Entrada apagar)
-	(accion pulsador_luz Pasillo apagar)
-	(accion pulsador_luz Banio apagar)
-	(accion pulsador_luz Dormitorio1 apagar)
-	(accion pulsador_luz Dormitorio2 apagar)
-	(accion pulsador_luz Dormitorio3 apagar)
+	(accion pulsador_luz salon apagar)
+	(accion pulsador_luz cocina apagar)
+	(accion pulsador_luz entrada apagar)
+	(accion pulsador_luz pasillo apagar)
+	(accion pulsador_luz banio apagar)
+	(accion pulsador_luz dormitorio1 apagar)
+	(accion pulsador_luz dormitorio2 apagar)
+	(accion pulsador_luz dormitorio3 apagar)
 )
 
 
 (deffacts Puertas
-	(Puerta Entrada Cocina)
-	(Puerta Pasillo Banio)
-	(Puerta Pasillo Dormitorio1)
-	(Puerta Pasillo Dormitorio2)
-	(Puerta Pasillo Dormitorio3)
+	(Puerta entrada cocina)
+	(Puerta pasillo banio)
+	(Puerta pasillo dormitorio1)
+	(Puerta pasillo dormitorio2)
+	(Puerta pasillo dormitorio3)
 )
 
 
 (deffacts Ventanas
-	(Ventana Entrada no)
-	(Ventana Salon si)
-	(Ventana Cocina si)
-	(Ventana Pasillo no)
-	(Ventana Banio no)
-	(Ventana Dormitorio1 si)
-	(Ventana Dormitorio2 si)
-	(Ventana Dormitorio3 si)
+	(Ventana entrada no)
+	(Ventana salon si)
+	(Ventana cocina si)
+	(Ventana pasillo no)
+	(Ventana banio no)
+	(Ventana dormitorio1 si)
+	(Ventana dormitorio2 si)
+	(Ventana dormitorio3 si)
 )
 
 
 (deffacts Pasos
-	(Paso Entrada Salon)
-	(Paso Salon Pasillo)
+	(Paso entrada salon)
+	(Paso salon pasillo)
 )
 
 
