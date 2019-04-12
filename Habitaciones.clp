@@ -223,7 +223,7 @@
 ; ----------------------------------------------------------------------------------------- ;
 
 
-; ----------------------------------- Versión del alumno ---------------------------------- ;
+; --------------------------------- Versión del profesor ---------------------------------- ;
 
 ; Si detecta movimiento se activa automáticamente
 (defrule encender_luz
@@ -240,6 +240,19 @@
 )
 
 
+; Si pasan 3 segundos y no hay posible paso
+(defrule encender_por_paso
+	(Manejo_inteligente_luces ?hab1)
+	?var <- (Estado ?hab1 parece ?t1)
+	(valor_registrado ?t2 movimiento ?hab2 off)
+	(posible_pasar ?hab1 ?hab2)
+	(test(< (+ ?t1 3) ?t2))
+	=>
+	(retract ?var)
+	(assert (Estado ?hab1 activo ?t2))
+)
+
+
 ; Detecta movimiento negativo
 (defrule parece_inactiva
 	(Manejo_inteligente_luces ?hab)
@@ -252,7 +265,7 @@
 )
 
 
-; 
+; Si pasan 10 segundos y no hay movimiento 
 (defrule apagar_luz
 	(Manejo_inteligente_luces ?hab)
 	?var <- (Estado ?hab parece ?t1)
@@ -268,15 +281,17 @@
 )
 
 
-; (defrule apagar_por_paso
-; 	(Manejo_inteligente_luces ?hab)
-; 	?var <- (Estado ?hab parece ?t1)
-; 	?var2 <- (accion pulsador_luz ?hab encender)
-; 	(valor_registrado ?t2 movimiento ?hab2 on)
-
-; 	=>
-; 	(retract ?var)
-; 	(retract ?var2)
-; 	(assert(Estado ?hab inactivo ?t2))
-; 	(assert (accion pulsador_luz ?hab apagar))
-; )
+; Si se produce un paso reciente
+(defrule apagar_por_paso
+	(Manejo_inteligente_luces ?hab1)
+	?var <- (Estado ?hab1 parece ?t1)
+	?var2 <- (accion pulsador_luz ?hab1 encender)
+	(valor_registrado ?t2 movimiento ?hab2 on)
+	(posible_pasar ?hab1 ?hab2)
+	(test (< ?t1 ?t2))
+	=>
+	(retract ?var)
+	(retract ?var2)
+	(assert(Estado ?hab1 inactivo ?t2))
+	(assert (accion pulsador_luz ?hab1 apagar))
+)
