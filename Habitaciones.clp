@@ -295,3 +295,21 @@
 	(assert(Estado ?hab1 inactivo ?t2))
 	(assert (accion pulsador_luz ?hab1 apagar))
 )
+
+
+(defrule paso_seguro
+	(Manejo_inteligente_luces ?hab1)
+	?var <- (Estado ?hab1 activo ?t1)
+	(necesario_pasar ?hab1 ?hab2)
+	(Estado ?hab2 inactivo ?t2)
+	(Estado ?hab2 parece ?t2)
+	(valor_registrado ?t3 movimiento ?hab3 on)
+	(posible_pasar ?hab1 ?hab3)
+	(test (< ?t1 ?t3))
+	=>
+	(assert(paso_seguro ?hab1 ?hab3))
+	(retract ?var)
+	(assert(Estado ?hab1 inactivo ?t3))
+)
+
+
