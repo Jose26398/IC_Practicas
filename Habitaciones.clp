@@ -66,22 +66,22 @@
 
 
 (defrule posible_pasar_puerta
-        (declare(salience 2))
+	(declare(salience 2))
 	(Puerta ?hab1 ?hab2)
 	=>
-        (assert (posible_pasar ?hab1 ?hab2))
-        (assert (posible_pasar ?hab2 ?hab1))
+	(assert (posible_pasar ?hab1 ?hab2))
+	(assert (posible_pasar ?hab2 ?hab1))
 	(printout t ?hab1 " tiene conexion con " ?hab2 crlf)
 )
 
 
 (defrule posible_pasar_paso
-        (declare(salience 2))
-        (Paso ?hab1 ?hab2)
-        =>
-        (assert (posible_pasar ?hab1 ?hab2))
-        (assert (posible_pasar ?hab2 ?hab1))
-        (printout t ?hab1 " tiene conexion con " ?hab2 crlf)
+	(declare(salience 2))
+	(Paso ?hab1 ?hab2)
+	=>
+	(assert (posible_pasar ?hab1 ?hab2))
+	(assert (posible_pasar ?hab2 ?hab1))
+	(printout t ?hab1 " tiene conexion con " ?hab2 crlf)
 )
 
 
@@ -95,25 +95,24 @@
 
 
 (defrule no_necesario_pasar
-        (declare(salience 1))
-        (Habitacion ?hab1)
-        (Habitacion ?hab2 & ~?hab1)
-        (Habitacion ?hab3 & ~?hab1 & ~?hab2)
-        (posible_pasar ?hab1 ?hab2)
-        (posible_pasar ?hab1 ?hab3)
-        =>
-        (assert (no_necesario_pasar ?hab1))
-        ;(printout t "No es necesario pasar de " ?hab1 " a " ?hab2 " o " ?hab3 crlf)
+	(declare(salience 1))
+	(Habitacion ?hab1)
+	(Habitacion ?hab2 & ~?hab1)
+	(Habitacion ?hab3 & ~?hab1 & ~?hab2)
+	(posible_pasar ?hab1 ?hab2)
+	(posible_pasar ?hab1 ?hab3)
+	=>
+	(assert (no_necesario_pasar ?hab1))
 )
 
 
 (defrule necesario_pasar
-        (Habitacion ?hab1)
-        (posible_pasar ?hab1 ?hab2)
-        (not(no_necesario_pasar ?hab1))
-        =>
-        (assert (necesario_pasar ?hab1 ?hab2))
-        (printout t "Es necesario pasar de " ?hab1 " a " ?hab2 crlf)
+	(Habitacion ?hab1)
+	(posible_pasar ?hab1 ?hab2)
+	(not(no_necesario_pasar ?hab1))
+	=>
+	(assert (necesario_pasar ?hab1 ?hab2))
+	(printout t "Es necesario pasar de " ?hab1 " a " ?hab2 crlf)
 )
 
 
@@ -226,29 +225,58 @@
 
 ; ----------------------------------- Versión del alumno ---------------------------------- ;
 
+; Si detecta movimiento se activa automáticamente
 (defrule encender_luz
 	(Manejo_inteligente_luces ?hab)
-	?var <- (Estado ?hab Inactivo ?t1)
-	?var2 <- (accion pulsador_luz ?hab apagar)
+	?var <- (Estado ?hab ?est ?t1)
+	?var2 <- (accion pulsador_luz ?hab ?acc)
 	(valor_registrado ?t2 movimiento ?hab on)
 	(test(< ?t1 ?t2))
 	=>
 	(retract ?var)
 	(retract ?var2)
-	(assert (Estado ?hab Activo ?t2))
+	(assert (Estado ?hab activo ?t2))
 	(assert (accion pulsador_luz ?hab encender))
 )
 
 
-(defrule apagar_luz
+; Detecta movimiento negativo
+(defrule parece_inactiva
 	(Manejo_inteligente_luces ?hab)
-	?var <- (Estado ?hab Activo ?t1)
-	?var2 <- (accion pulsador_luz ?hab encender)
+	?var <- (Estado ?hab activo ?t1)
 	(valor_registrado ?t2 movimiento ?hab off)
 	(test(< ?t1 ?t2))
 	=>
 	(retract ?var)
+	(assert (Estado ?hab parece ?t2))
+)
+
+
+; 
+(defrule apagar_luz
+	(Manejo_inteligente_luces ?hab)
+	?var <- (Estado ?hab parece ?t1)
+	?var2 <- (accion pulsador_luz ?hab encender)
+	(valor_registrado ?t2 movimiento ?hab off)
+	(ultimo_registro movimiento ?hab ?t2)
+	(test (< (+ ?t1 10) ?t2))
+	=>
+	(retract ?var)
 	(retract ?var2)
-	(assert (Estado ?hab Inactivo ?t2))
+	(assert(Estado ?hab inactivo ?t2))
 	(assert (accion pulsador_luz ?hab apagar))
 )
+
+
+; (defrule apagar_por_paso
+; 	(Manejo_inteligente_luces ?hab)
+; 	?var <- (Estado ?hab parece ?t1)
+; 	?var2 <- (accion pulsador_luz ?hab encender)
+; 	(valor_registrado ?t2 movimiento ?hab2 on)
+
+; 	=>
+; 	(retract ?var)
+; 	(retract ?var2)
+; 	(assert(Estado ?hab inactivo ?t2))
+; 	(assert (accion pulsador_luz ?hab apagar))
+; )
