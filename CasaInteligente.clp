@@ -126,7 +126,7 @@
 (defrule registrar_senial
 	?var <- (valor ?tipo ?hab ?v)
 	=>
-	(bind ?t (time))
+	(bind ?t (momento))
 	(assert (valor_registrado ?t ?tipo ?hab ?v))
 	(assert (ultimo_registro ?tipo ?hab ?t))
 	(retract ?var)
@@ -229,27 +229,45 @@
 (defrule encender_luz
 	(Manejo_inteligente_luces ?hab)
 	?var <- (Estado ?hab ?est ?t1)
-	?var2 <- (accion pulsador_luz ?hab ?acc)
 	(valor_registrado ?t2 movimiento ?hab on)
 	(test(< ?t1 ?t2))
 	=>
 	(retract ?var)
-	(retract ?var2)
 	(assert (Estado ?hab activo ?t2))
 	(assert (accion pulsador_luz ?hab encender))
 )
 
-
-; Si pasan 3 segundos y no hay posible paso
-(defrule encender_por_paso
-	(Manejo_inteligente_luces ?hab1)
-	?var <- (Estado ?hab1 parece ?t1)
-	(valor_registrado ?t2 movimiento ?hab2 off)
-	(posible_pasar ?hab1 ?hab2)
-	(test(< (+ ?t1 3) ?t2))
+(defrule encender_luz_pulsador
+	?var <- (Estado ?hab ?est ?t1)
+	?var2 <- (accion pulsador_luz_persona ?hab encender)
 	=>
 	(retract ?var)
-	(assert (Estado ?hab1 activo ?t2))
+	(retract ?var2)
+	(assert (Estado ?hab activo (momento)))
+)
+
+
+; Si pasan 3 segundos y no hay posible paso
+; (defrule encender_por_paso
+; 	(Manejo_inteligente_luces ?hab1)
+; 	?var <- (Estado ?hab1 parece ?t1)
+; 	(valor_registrado ?t2 movimiento ?hab2 off)
+; 	(posible_pasar ?hab1 ?hab2)
+; 	;(test(< (+ ?t1 3) ?t2))
+; 	=>
+; 	(retract ?var)
+; 	(assert (Estado ?hab1 activo ?t2))
+; )
+
+(defrule encender_tras_3seg
+	(Manejo_inteligente_luces ?hab1)
+	?var <- (Estado ?hab1 parece ?t1)
+	(not(posible_paso ?hab1 ?hab2 & ~?hab1 ?t2))
+	(test(< (+ ?t1 3) (momento)))
+	=>
+	(retract ?var)
+	(assert(Estado ?hab1 activo (momento)))
+	(assert (accion pulsador_luz ?hab encender))
 )
 
 
@@ -269,47 +287,77 @@
 (defrule apagar_luz
 	(Manejo_inteligente_luces ?hab)
 	?var <- (Estado ?hab parece ?t1)
-	?var2 <- (accion pulsador_luz ?hab encender)
 	(valor_registrado ?t2 movimiento ?hab off)
 	(ultimo_registro movimiento ?hab ?t2)
-	(test (< (+ ?t1 10) ?t2))
+	(test(< (+ ?t1 10) (momento)))
 	=>
 	(retract ?var)
-	(retract ?var2)
 	(assert(Estado ?hab inactivo ?t2))
 	(assert (accion pulsador_luz ?hab apagar))
 )
 
+; (defrule apagar_tras_10seg
+; 	(Manejo_inteligente_luces ?hab)
+; 	?var <- (Estado ?hab parece ?t1)
+; 	=>
+; 	(retract ?var)
+; 	(assert(Estado ?hab inactivo (momento)))
+; )
 
-; Si se produce un paso reciente
-(defrule apagar_por_paso
-	(Manejo_inteligente_luces ?hab1)
-	?var <- (Estado ?hab1 parece ?t1)
-	?var2 <- (accion pulsador_luz ?hab1 encender)
-	(valor_registrado ?t2 movimiento ?hab2 on)
-	(posible_pasar ?hab1 ?hab2)
-	(test (< ?t1 ?t2))
+(defrule apagar_luz_pulsador
+	?var <- (Estado ?hab ?est ?t1)
+	?var2 <- (accion pulsador_luz_persona ?hab apagar)
 	=>
 	(retract ?var)
 	(retract ?var2)
+	(assert (Estado ?hab inactivo (momento)))
+)
+
+; Si se produce un paso reciente
+(defrule apagar_por_paso
+	(declare(salience -2))
+	(Manejo_inteligente_luces ?hab1)
+	?var <- (Estado ?hab1 parece ?t1)
+	(valor_registrado ?t2 movimiento ?hab2 on)
+	(paso_seguro ?hab1 ?hab2 ?t2)
+	(test (< ?t1 ?t2))
+	=>
+	(retract ?var)
 	(assert(Estado ?hab1 inactivo ?t2))
 	(assert (accion pulsador_luz ?hab1 apagar))
 )
 
 
-(defrule paso_seguro
+; Calcular si se ha producido un posible paso y registrarlo
+(defrule posible_paso
 	(Manejo_inteligente_luces ?hab1)
-	?var <- (Estado ?hab1 activo ?t1)
-	(necesario_pasar ?hab1 ?hab2)
-	(Estado ?hab2 inactivo ?t2)
-	(Estado ?hab2 parece ?t2)
-	(valor_registrado ?t3 movimiento ?hab3 on)
-	(posible_pasar ?hab1 ?hab3)
-	(test (< ?t1 ?t3))
+	(Manejo_inteligente_luces ?hab2)
+	(valor_registrado ?t1 movimiento ?hab1 on)
+	(posible_pasar ?hab1 ?hab2)
+	(Estado ?hab2 ~inactivo ?t2)
+	(test(> ?t1 ?t2))
 	=>
-	(assert(paso_seguro ?hab1 ?hab3))
+	(assert (posible_paso ?hab2 ?hab1 ?t1))
+)
+
+
+; Se produce un paso seguro (calculado utilizando los posibles pasos)
+(defrule paso_seguro
+	(declare(salience -1))
+	?var <- (posible_paso ?hab2 ?hab1 ?t1)
+	(not(posible_paso ?hab3 & ~?hab2 ?hab1 ?t1))
+	=>
 	(retract ?var)
-	(assert(Estado ?hab1 inactivo ?t3))
+	(assert(paso_seguro ?hab2 ?hab1 ?t1))
+)
+
+(defrule cambiar_con_paso_seguro
+	?var <- (Estado ?hab2 activo ?t1)
+	(paso_seguro ?hab2 ?hab1 ?t2)
+	(test(< ?t1 ?t2))
+	=>
+	(retract ?var)
+	(assert(Estado ?hab2 inactivo ?t2))
 )
 
 

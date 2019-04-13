@@ -1,0 +1,85 @@
+(bombilla salon 460)
+(bombilla cocina 270)
+(bombilla pasillo 230)
+(luminosidad salon 32)
+(luminosidad cocina 19)
+(luminosidad pasillo 12)
+
+
+;;; Persona sola en salon desde las 10 hasta las 11:10, sale a las 11:10 al  pasillo y despues a la cocina donde permanece hasta las 11:30 y vuelve
+;;; al salon
+
+
+(manejoluces salon)
+(manejoluces pasillo)
+(manejoluces banio)
+(manejoluces dormitorio1)
+(manejoluces dormitorio2)
+(manejoluces dormitorio3)
+(manejoluces entrada)
+(manejoluces cocina)
+
+
+
+; Está en el salón
+(datosensor  10 10 0  movimiento dormitorio1 on)
+
+; Enciende la luz del salon
+(datosensor 10 10 1 pulsador entrada on)
+
+; Apaga la luz del salon y sale al pasillo
+(datosensor 10 10 9 pulsador entrada off)
+(datosensor  10 10 10  movimiento cocina on)
+
+; Sale de la cocina
+(datosensor  10 10 16  movimiento cocina off)
+
+;Entra en la entrada
+(datosensor  10 10 17  movimiento entrada on)
+
+;Entra en la entrada
+(datosensor  10 10 18  movimiento entrada off)
+
+; salon sin movimiento
+(datosensor  10 10 19  movimiento salon on)
+
+; Sale al pasillo
+(datosensor  10 10 25  movimiento dormitorio1 off)
+(datosensor  10 10 26  movimiento pasillo on)
+
+; Enciende la luz del baño
+(datosensor 10 10 27 pulsador banio on)
+
+; Enciende la luz del baño
+(datosensor 10 10 39 pulsador banio off)
+
+(datosensor  10 10 40  movimiento pasillo on)
+
+;Entra en el salon
+(datosensor  10 10 41  movimiento dormitorio1 on)
+
+; pasillo sin movimiento
+(datosensor  10 10 42  movimiento salon off)
+(datosensor  10 10 43  movimiento pasillo on)
+
+;cocina sin movimiento
+(datosensor  10 10 44  movimiento pasillo off)
+(datosensor  10 10 45  movimiento dormitorio2 on)
+
+; Sale al pasillo
+(datosensor  10 10 50  movimiento dormitorio2 off)
+(datosensor  10 10 51  movimiento pasillo on)
+
+; Sale al pasillo
+(datosensor  10 10 53  movimiento pasillo off)
+(datosensor  10 10 55  movimiento cocina on)
+
+
+; Sale al pasillo
+(datosensor  10 11 0  movimiento dormitorio1 off)
+(datosensor  10 11 1  movimiento pasillo on)
+
+
+; Sale al pasillo
+(datosensor  10 11 2  movimiento pasillo off)
+(datosensor  10 11 3  movimiento salon on)
