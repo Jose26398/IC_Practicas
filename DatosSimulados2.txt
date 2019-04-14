@@ -1,8 +1,12 @@
 (bombilla salon 460)
 (bombilla cocina 270)
 (bombilla pasillo 230)
-(luminosidad salon 32)
-(luminosidad cocina 19)
+(bombilla dormitorio1 230)
+(bombilla dormitorio2 230)
+(bombilla dormitorio3 230)
+(bombilla entrada 230)
+(luminosidad dormitorio1 32)
+(luminosidad dormitorio2 19)
 (luminosidad pasillo 12)
 
 
@@ -21,65 +25,31 @@
 
 
 
-; Está en el salón
+; Activa
 (datosensor  10 10 0  movimiento dormitorio1 on)
 
-; Enciende la luz del salon
-(datosensor 10 10 1 pulsador entrada on)
+; Activa -> Parece inactiva
+(datosensor 10 10 10 movimiento dormitorio1 off)
 
-; Apaga la luz del salon y sale al pasillo
-(datosensor 10 10 9 pulsador entrada off)
-(datosensor  10 10 10  movimiento cocina on)
-
-; Sale de la cocina
-(datosensor  10 10 16  movimiento cocina off)
-
-;Entra en la entrada
-(datosensor  10 10 17  movimiento entrada on)
-
-;Entra en la entrada
-(datosensor  10 10 18  movimiento entrada off)
-
-; salon sin movimiento
-(datosensor  10 10 19  movimiento salon on)
-
-; Sale al pasillo
-(datosensor  10 10 25  movimiento dormitorio1 off)
-(datosensor  10 10 26  movimiento pasillo on)
-
-; Enciende la luz del baño
-(datosensor 10 10 27 pulsador banio on)
-
-; Enciende la luz del baño
-(datosensor 10 10 39 pulsador banio off)
-
-(datosensor  10 10 40  movimiento pasillo on)
-
-;Entra en el salon
-(datosensor  10 10 41  movimiento dormitorio1 on)
-
-; pasillo sin movimiento
-(datosensor  10 10 42  movimiento salon off)
-(datosensor  10 10 43  movimiento pasillo on)
-
-;cocina sin movimiento
-(datosensor  10 10 44  movimiento pasillo off)
-(datosensor  10 10 45  movimiento dormitorio2 on)
-
-; Sale al pasillo
-(datosensor  10 10 50  movimiento dormitorio2 off)
-(datosensor  10 10 51  movimiento pasillo on)
-
-; Sale al pasillo
-(datosensor  10 10 53  movimiento pasillo off)
-(datosensor  10 10 55  movimiento cocina on)
+; Parece inactiva -> Activa
 
 
-; Sale al pasillo
-(datosensor  10 11 0  movimiento dormitorio1 off)
-(datosensor  10 11 1  movimiento pasillo on)
+
+; Activa -> Parece inactiva
+(datosensor  10 10 27  movimiento dormitorio1 off)
+
+; Parece inactiva -> Inactiva v1 y paso_seguro
+(datosensor  10 10 29  movimiento pasillo on)
+
+(datosensor  10 10 35  movimiento pasillo off)
+(datosensor  10 10 37  movimiento dormitorio1 on)
 
 
-; Sale al pasillo
-(datosensor  10 11 2  movimiento pasillo off)
-(datosensor  10 11 3  movimiento salon on)
+
+; Activa -> Parece inactiva y posible_paso
+(datosensor  10 10 43  movimiento dormitorio2 on)
+(datosensor  10 10 45  movimiento dormitorio1 off)
+(datosensor  10 10 46  movimiento pasillo on)
+
+
+; Parece inactiva -> Inactiva v2
