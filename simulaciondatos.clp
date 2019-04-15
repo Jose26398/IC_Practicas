@@ -1,6 +1,6 @@
 (defrule cargardatosasimular
 =>
-(load-facts DatosSimulados2.txt) 
+(load-facts DatosSimulados.txt) 
 )
 
 
