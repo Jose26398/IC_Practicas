@@ -1,5 +1,5 @@
 ; PRACTICAS INGENIERIA DEL CONOCIMIENTO 2018/19
-; AUTOR: José Maria Sénchez Guerrero
+; AUTOR: José Maria Sánchez Guerrero
 
 
 ; ----------------------------------------------------------------------------------------- ;

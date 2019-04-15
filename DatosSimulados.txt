@@ -1,8 +1,12 @@
 (bombilla salon 460)
 (bombilla cocina 270)
 (bombilla pasillo 230)
-(luminosidad salon 32)
-(luminosidad cocina 19)
+(bombilla dormitorio1 230)
+(bombilla dormitorio2 230)
+(bombilla dormitorio3 230)
+(bombilla entrada 230)
+(luminosidad dormitorio1 32)
+(luminosidad dormitorio2 19)
 (luminosidad pasillo 12)
 
 
@@ -10,44 +14,42 @@
 ;;; al salon
 
 
-(manejoluces cocina)
+(manejoluces salon)
 (manejoluces pasillo)
+(manejoluces banio)
+(manejoluces dormitorio1)
+(manejoluces dormitorio2)
+(manejoluces dormitorio3)
+(manejoluces entrada)
+(manejoluces cocina)
 
 
-; Está en el salón
-(datosensor 10 0 1 movimiento salon on)
 
-; Enciende la luz del salon
-(datosensor 10 0 0 pulsador salon on)
+; Activa
+(datosensor  9 59 05  movimiento dormitorio1 on)
 
-; Apaga la luz del salon y sale al pasillo
-(datosensor 11 10 14 pulsador salon off)
-(datosensor  11 10 15  movimiento pasillo on)
+; Activa -> Parece inactiva
+(datosensor  9 59 10 movimiento dormitorio1 off)
 
-
-;Entra en la cocina
-(datosensor  11 10 17  movimiento cocina on)
+; Parece inactiva -> Activa (a los 3 segundos)
 
 
-; salon sin movimiento
-(datosensor  11 11 1  movimiento salon off)
 
-; pasillo sin movimiento
-(datosensor  11 11 15  movimiento pasillo off)
+; Activa -> Parece inactiva
+(datosensor  9 59 20  movimiento dormitorio1 off)
+
+; Parece inactiva -> Inactiva (con paso_seguro)
+(datosensor  9 59 22  movimiento pasillo on)
+
+(datosensor  9 59 28  movimiento pasillo off)
+(datosensor  9 59 30  movimiento dormitorio1 on)
 
 
-; Sale al pasillo
-(datosensor  11 30 43  movimiento pasillo on)
 
-; Enciende la luz del salon
-(datosensor 11 30 44 pulsador salon on)
+; Activa -> Parece inactiva (con posible_paso)
+(datosensor  9 59 46  movimiento dormitorio2 on)
+(datosensor  9 59 48  movimiento dormitorio1 off)
+(datosensor  9 59 49  movimiento pasillo on)
 
-;Entra en el salon
-(datosensor  11 30 45  movimiento salon on)
 
-; pasillo sin movimiento
-(datosensor  11 31 43  movimiento pasillo off)
-
-;cocina sin movimiento
-(datosensor  11 31 17  movimiento cocina off)
-
+; Parece inactiva -> Inactiva (a los 10 segundos)
