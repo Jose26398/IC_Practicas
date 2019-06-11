@@ -1,0 +1,15 @@
+;;; Persona sola en salon desde las 10 hasta las 11:10, sale a las 11:10 al  pasillo y despues a la cocina donde permanece hasta las 11:30 y vuelve
+;;; al salon
+(datoactivo 1)
+
+(datosensor 1 temperatura cactus 25)
+(datosensor 2 temperatura verduras 25)
+(datosensor 3 temperatura flores 25)
+(datosensor 4 luminosidad cactus 800)
+(datosensor 5 luminosidad verduras 800)
+(datosensor 6 luminosidad flores 800)
+
+; Realizar riego mas intenso (antes de las 12)
+(datosensor 7 humedad flores on)
+
+

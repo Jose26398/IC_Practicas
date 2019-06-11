@@ -1,0 +1,3 @@
+Malaga 300
+Jaen 200
+Granada 100
