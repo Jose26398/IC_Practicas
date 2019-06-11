@@ -1,0 +1,55 @@
+(bombilla salon 460)
+(bombilla cocina 270)
+(bombilla pasillo 230)
+(bombilla dormitorio1 230)
+(bombilla dormitorio2 230)
+(bombilla dormitorio3 230)
+(bombilla entrada 230)
+(luminosidad dormitorio1 32)
+(luminosidad dormitorio2 19)
+(luminosidad pasillo 12)
+
+
+;;; Persona sola en salon desde las 10 hasta las 11:10, sale a las 11:10 al  pasillo y despues a la cocina donde permanece hasta las 11:30 y vuelve
+;;; al salon
+
+
+(manejoluces salon)
+(manejoluces pasillo)
+(manejoluces banio)
+(manejoluces dormitorio1)
+(manejoluces dormitorio2)
+(manejoluces dormitorio3)
+(manejoluces entrada)
+(manejoluces cocina)
+
+
+
+; Activa
+(datosensor  9 59 05  movimiento dormitorio1 on)
+
+; Activa -> Parece inactiva
+(datosensor  9 59 10 movimiento dormitorio1 off)
+
+; Parece inactiva -> Activa (a los 3 segundos)
+
+
+
+; Activa -> Parece inactiva
+(datosensor  9 59 20  movimiento dormitorio1 off)
+
+; Parece inactiva -> Inactiva (con paso_seguro)
+(datosensor  9 59 22  movimiento pasillo on)
+
+(datosensor  9 59 28  movimiento pasillo off)
+(datosensor  9 59 30  movimiento dormitorio1 on)
+
+
+
+; Activa -> Parece inactiva (con posible_paso)
+(datosensor  9 59 46  movimiento dormitorio2 on)
+(datosensor  9 59 48  movimiento dormitorio1 off)
+(datosensor  9 59 49  movimiento pasillo on)
+
+
+; Parece inactiva -> Inactiva (a los 10 segundos)
