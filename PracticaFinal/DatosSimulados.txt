@@ -5,11 +5,25 @@
 (datosensor 1 temperatura cactus 25)
 (datosensor 2 temperatura verduras 25)
 (datosensor 3 temperatura flores 25)
+
 (datosensor 4 luminosidad cactus 800)
 (datosensor 5 luminosidad verduras 800)
 (datosensor 6 luminosidad flores 800)
 
-; Realizar riego mas intenso (antes de las 12)
-(datosensor 7 humedad flores on)
+
+; Realizar riego normal de todos los tiestos
+(datosensor 7 humedad cactus 900)
+(datosensor 8 humedad verduras 600)
+(datosensor 9 humedad flores 550)
 
 
+
+; Subimos temperatura y vemos como se activa el vaporizador (solo en las flores)
+(datosensor 10 temperatura cactus 37)
+(datosensor 11 temperatura verduras 37)
+(datosensor 12 temperatura flores 37)
+
+; Volvemos a regar (activamos manualmente)
+(datosensor 13 humedad cactus on)
+(datosensor 14 humedad verduras on)
+(datosensor 15 humedad flores on)

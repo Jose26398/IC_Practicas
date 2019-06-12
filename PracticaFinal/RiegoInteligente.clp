@@ -37,25 +37,25 @@
 ; Inicialización de los estados de cada tiesto (secos por defecto)
 
 (deffacts Temperaturas
-	(temperatura cactus 0)
-	(temperatura verduras 0)
-	(temperatura flores 0)
+	(temperatura cactus 25)
+	(temperatura verduras 25)
+	(temperatura flores 25)
 )
 
 ; Conocimiento de las luminosidades de cada habitación proporcionada por el profesor
 
 (deffacts TemperaturaLimite
 	(tlimite cactus 100) 
-	(tlimite verduras 50)
-	(tlimite flores 40)
+	(tlimite verduras 40)
+	(tlimite flores 30)
 )
 
 ; Inicialización de los estados de cada tiesto (secos por defecto)
 
 (deffacts Luminosidades
-	(luminosidad cactus 500)
-	(luminosidad verduras 500)
-	(luminosidad flores 500)
+	(luminosidad cactus 800)
+	(luminosidad verduras 800)
+	(luminosidad flores 800)
 )
 
 
@@ -72,13 +72,13 @@
 )
 
 
-
+; ------------------------------------------------------------------------------------------------- ;
 (defrule siguienteHora
 	(declare(salience 9999))
 	?var1 <- (Siguientehora)
 	?var2 <- (datosensor ?x ?tipo ?planta ?valor)
 	?var3 <- (datoactivo ?y)
-	(test (= ?x (+ ?y 0)))
+	(test (= ?x ?y))
 	=>
 	(retract ?var1)
 	(retract ?var2)
@@ -89,41 +89,59 @@
 
 (defrule datosensor
 	(declare (salience 9998))
-	?f <-  (datosensor ?x ?tipo ?habitacion ?val)
+	?f <-  (datosensor ?x ?tipo ?planta ?val)
 	(datoactivo ?x)
 	=>
-	(assert (valor ?tipo ?habitacion ?val))
+	(assert (valor ?tipo ?planta ?val))
 )
 
 
-(defrule asignarTemperaturaVaporizador
-	?var1 <- (Temperatura ?t)
-	?var2 <- (temperatura ?planta ?valor)
+
+; ------------------------------------------------------------------------------------------------- ;
+(defrule asignarTemperatura
+	?var1 <- (valor temperatura ?planta ?valor)
+	?var2 <- (temperatura ?planta ?grados)
 	(tlimite ?planta ?limite)
-	(test (> ?t ?limite))
+	(test (<= ?valor ?limite))
 	=>
 	(retract ?var1)
 	(retract ?var2)
-	(printout t "Temperatura de " ?planta " asignada al minimo gracias al vaporizador" crlf)
+	(printout t "Temperatura de " ?planta " asignada a " ?valor crlf)
+	(assert (temperatura ?planta ?valor))
+)
+
+(defrule asignarTemperaturaVaporizador
+	?var1 <- (valor temperatura ?planta ?valor)
+	?var2 <- (temperatura ?planta ?grados)
+	(tlimite ?planta ?limite)
+	(test (> ?valor ?limite))
+	=>
+	(retract ?var1)
+	(retract ?var2)
+	(printout t "Temperatura no soportada por " ?planta
+				". El vaporizador la mantendra en su minimo " ?limite " hasta que baje" crlf)
 	(assert (temperatura ?planta ?limite))
 )
 
-(defrule asignarTemperatura
-	?var1 <- (Temperatura ?t)
-	?var2 <- (temperatura ?planta ?valor)
-	(tlimite ?planta ?limite)
-	(test (<= ?t ?limite))
+
+
+(defrule asignarLuminosidad
+	?var1 <- (valor luminosidad ?planta ?valor)
+	?var2 <- (luminosidad ?planta ?lux)
 	=>
 	(retract ?var1)
 	(retract ?var2)
-	(printout t "Temperatura de " ?planta " asignada a " ?t crlf)
-	(assert (temperatura ?planta ?t))
+	(printout t "Luminosidad de " ?planta " asignada a " ?valor crlf)
+	(assert (luminosidad ?planta ?valor))
 )
 
 
+
+
+; ------------------------------------------------------------------------------------------------- ;
 (defrule regarPlanta
 	?var <- (valor humedad ?planta ?valor)
-	(humedad planta ?x)
+	(humedad ?planta ?x)
 	(hideal ?planta ?min ?max)
 	=>
 	(assert (regarPlanta ?planta ?x))
@@ -154,15 +172,40 @@
 )
 
 
-(defrule print
-	(declare (salience -4))
+(defrule riegoIntenso
+	(declare (salience -100))
 	?var <- (regarPlanta ?planta ?val)
 	(hideal ?planta ?min ?max)
-	(test(< 500 ?min))
+	(temperatura ?planta ?grados)
+	(luminosidad ?planta ?lux)
+	(test (and (< 100 ?lux) (< 35 ?grados)) )
 	=>
 	(retract ?var)
-	(printout t "Se ha regado la planta " ?planta " hasta su humedad ideal " ?min crlf)
+	(printout t "Se ha regado mucho la planta " ?planta " hasta su humedad ideal " ?min " por la posible evaporacion del agua " crlf)
+)
+
+(defrule riegoNormal
+	(declare (salience -100))
+	?var <- (regarPlanta ?planta ?val)
+	(hideal ?planta ?min ?max)
+	(temperatura ?planta ?grados)
+	(luminosidad ?planta ?lux)
+	(test (or (< 100 ?lux) (< 35 ?grados)) )
+	=>
+	(retract ?var)
+	(printout t "Se ha regado la planta de manera normal " ?planta " hasta su humedad ideal " ?min crlf)
 )
 
 
+(defrule riegoEscaso
+	(declare (salience -100))
+	?var <- (regarPlanta ?planta ?val)
+	(hideal ?planta ?min ?max)
+	(temperatura ?planta ?grados)
+	(luminosidad ?planta ?lux)
+	(test (and (>= 100 ?lux) (>= 35 ?grados)) )
+	=>
+	(retract ?var)
+	(printout t "Se ha regado poco la planta " ?planta " hasta su humedad ideal " ?min " porque no se evaporara el agua" crlf)
+)
 
