@@ -95,6 +95,14 @@
 	(assert (valor ?tipo ?planta ?val))
 )
 
+(defrule datosensorManual
+	(declare (salience 9998))
+	?f <-  (datosensor ?tipo ?planta ?val)
+	=>
+	(retract ?f)
+	(assert (valor ?tipo ?planta ?val))
+)
+
 
 
 ; ------------------------------------------------------------------------------------------------- ;
@@ -156,7 +164,7 @@
 	(test (> ?val (+ ?max 100)))
 	=>
 	(retract ?var)
-	(printout t "Se riega la planta " ?planta " por situacion critica" crlf)
+	(assert (regadoCritico ?planta ?val))
 )
 
 
@@ -164,25 +172,48 @@
 	(declare (salience -2))
 	?var <- (regarPlanta ?planta ?val)
 	(luminosidad ?planta ?valor)
-	(Luminosidad ?lux)
-	(test (> ?lux ?valor))
+	(test (< 600 ?valor))  ; valor < 600
 	=>
 	(retract ?var)
-	(printout t "Se regara la planta " ?planta " mas tarde" crlf)
+	(assert (regarDespues ?planta))
+	(printout t "Se regara la planta " ?planta " de noche (cuando la luminosidad baje)" crlf)
 )
 
 
-(defrule riegoIntenso
+(defrule riegoNocturno
+	(declare (salience -4))
+	?var <- (regarDespues ?planta)
+	(luminosidad ?planta ?valor)
+	(test (< ?valor 600))
+	(humedad ?planta ?x)
+	(hideal ?planta ?min ?max)
+	=>
+	(assert (regarPlanta ?planta ?x))
+	(retract ?var)
+)
+
+
+(defrule riegoCriticoIntenso
 	(declare (salience -100))
-	?var <- (regarPlanta ?planta ?val)
+	?var <- (regadoCritico ?planta ?val)
 	(hideal ?planta ?min ?max)
 	(temperatura ?planta ?grados)
 	(luminosidad ?planta ?lux)
-	(test (and (< 100 ?lux) (< 35 ?grados)) )
+	(test (and (< 600 ?lux) (< 35 ?grados)) ) ; Lux > 600 y grados > 35
 	=>
 	(retract ?var)
-	(printout t "Se ha regado mucho la planta " ?planta " hasta su humedad ideal " ?min " por la posible evaporacion del agua " crlf)
+	(printout t "Por situacion critica, se ha regado mucho la planta " ?planta " hasta su humedad ideal " ?min " por la posible evaporacion del agua " crlf)
 )
+
+(defrule riegoCriticoNormal
+	(declare (salience -100))
+	?var <- (regadoCritico ?planta ?val)
+	(hideal ?planta ?min ?max)
+	=>
+	(retract ?var)
+	(printout t "Por situacion critica, se ha regado la planta " ?planta " normalmente hasta su humedad ideal " ?min crlf)
+)
+
 
 (defrule riegoNormal
 	(declare (salience -100))
@@ -190,10 +221,10 @@
 	(hideal ?planta ?min ?max)
 	(temperatura ?planta ?grados)
 	(luminosidad ?planta ?lux)
-	(test (or (< 100 ?lux) (< 35 ?grados)) )
+	(test (or (< 600 ?lux) (< 35 ?grados)) ) ; Lux > 600 o grados > 35
 	=>
 	(retract ?var)
-	(printout t "Se ha regado la planta de manera normal " ?planta " hasta su humedad ideal " ?min crlf)
+	(printout t "Se ha regado la planta " ?planta " de manera normal hasta su humedad ideal " ?min crlf)
 )
 
 
@@ -203,7 +234,7 @@
 	(hideal ?planta ?min ?max)
 	(temperatura ?planta ?grados)
 	(luminosidad ?planta ?lux)
-	(test (and (>= 100 ?lux) (>= 35 ?grados)) )
+	(test (and (>= 600 ?lux) (>= 35 ?grados)) ) ; Lux < 600 y grados < 35
 	=>
 	(retract ?var)
 	(printout t "Se ha regado poco la planta " ?planta " hasta su humedad ideal " ?min " porque no se evaporara el agua" crlf)

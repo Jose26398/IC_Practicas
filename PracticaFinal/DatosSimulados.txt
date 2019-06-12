@@ -24,6 +24,6 @@
 (datosensor 12 temperatura flores 37)
 
 ; Volvemos a regar (activamos manualmente)
-(datosensor 13 humedad cactus on)
-(datosensor 14 humedad verduras on)
-(datosensor 15 humedad flores on)
+(datosensor 13 humedad cactus 900)
+(datosensor 14 humedad verduras 600)
+(datosensor 15 humedad flores 550)
