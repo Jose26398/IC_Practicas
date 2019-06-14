@@ -75,7 +75,7 @@
 ; ------------------------------------------------------------------------------------------------- ;
 (defrule siguienteHora
 	(declare(salience 9999))
-	?var1 <- (Siguientehora)
+	?var1 <- (siguiente_orden)
 	?var2 <- (datosensor ?x ?tipo ?planta ?valor)
 	?var3 <- (datoactivo ?y)
 	(test (= ?x ?y))
@@ -90,7 +90,7 @@
 (defrule datosensor
 	(declare (salience 9998))
 	?f <-  (datosensor ?x ?tipo ?planta ?val)
-	(datoactivo ?x)
+	(datoactivo ?x)m
 	=>
 	(assert (valor ?tipo ?planta ?val))
 )
