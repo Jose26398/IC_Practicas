@@ -76,7 +76,6 @@
 
 
 
-
 ; ------------------------------------------------------------------------------------------------- ;
 
 (defrule cargardatosasimular
@@ -247,7 +246,7 @@
 
 
 (defrule posponerRiegoLuminosidad
-	(declare (salience -2))
+	(declare (salience -12))
 	?var <- (regarPlanta ?planta ?val)
 	(luminosidad ?planta ?valor)
 	(test (< 600 ?valor))  ; valor > 600
@@ -259,7 +258,7 @@
 
 
 (defrule riegoNocturno
-	(declare (salience -4))
+	(declare (salience -14))
 	?var <- (regarDespues ?planta)
 	(luminosidad ?planta ?valor)
 	(test (< ?valor 600))
@@ -286,7 +285,7 @@
 )
 
 (defrule riegoCriticoNormal
-	(declare (salience -100))
+	(declare (salience -50))
 	(vaporizador ?planta off)
 	?var <- (regadoCritico ?planta ?val)
 	(hideal ?planta ?min ?max)
@@ -313,7 +312,7 @@
 )
 
 (defrule riegoCriticoNormalVaporizador
-	(declare (salience -100))
+	(declare (salience -50))
 	(vaporizador ?planta on)
 	?var <- (regadoCritico ?planta ?val)
 	(hideal ?planta ?min ?max)
@@ -354,3 +353,132 @@
 
 
 
+; (defrule comprobarLluviaLigera
+; 	(declare (salience -70))
+; 	(Lluvia prediccion ?intensidad)
+; 	(humedad ?planta ?h)
+; 	(hideal ?planta ?min ?max)
+; 	(test (< ?intensidad 6.5) )
+; 	(test (and (> ?h ?min) (< ?h ?max)))
+; 	=>
+; 	(retract ?var)
+; 	(printout t "No se activara el riego para " ?planta " porque se prevee poca lluvia." crlf)
+; )
+
+; (defrule comprobarLluviaModerada
+; 	(declare (salience -70))
+; 	(Lluvia prediccion ?intensidad)
+; 	(humedad ?planta ?h)
+; 	(hideal ?planta ?min ?max)
+; 	(test (and (>= ?intensidad 6.5) (< ?intensidad 15)) )
+; 	(test (and (>= ?h ?min) (< ?h ?max)))
+; 	=>
+; 	(retract ?var)
+; 	(printout t "Se ha cumplido le prevision de lluvia, por lo que no hace falta regar " ?planta "." crlf)
+; )
+
+
+
+(defrule riegoNormalPorLluviaLigera
+	(declare (salience -70))
+	(humedad ?planta ?h)
+	(hideal ?planta ?min ?max)
+	(Lluvia prediccion ?intensidad)
+	(test (< ?intensidad 6.5))
+	=>
+	(printout t "Se prepara un riego normal (si lo necesita) para la planta " ?planta " porque se prevee una lluvia ligera." crlf)
+	(assert (riegoNormal))
+)
+
+
+(defrule riegoEscasoPorLluviaModerada
+	(declare (salience -70))
+	(Tiesto ?planta)
+	(Lluvia prediccion ?intensidad)
+	(test (and (>= ?intensidad 6.5) (< ?intensidad 15)) )
+	=>
+	(printout t "Se prepara un riego escaso (si lo necesita) para la planta " ?planta " porque se prevee una lluvia moderada." crlf)
+	(assert (riegoEscaso))
+)
+
+
+(defrule riegoNuloPorLluviaTorrencial
+	(declare (salience -70))
+	(Tiesto ?planta)
+	?var2 <- (Lluvia prediccion ?intensidad)
+	(test (>= ?intensidad 15) )
+	=>
+	(printout t "No se regara la planta " ?planta " porque se prevee una lluvia intensa." crlf)
+	(assert (riegoNulo))
+)
+
+
+
+
+(defrule comprobacionLluviaEnRango
+	(declare (salience -7))
+	?var1 <- (regarPlanta ?planta ?val)
+	(riegoNormal)
+	(Lluvia prediccion ?intensidad)
+	=>
+	(retract ?var1)
+	(printout t "La planta " ?planta " tiene un valor alto de humedad (necesita ser regada). " crlf
+				"Como se prevee una lluvia de intensidad " ?intensidad ", se regará de forma normal." crlf)
+	(assert (activarRiego ?planta))
+)
+
+
+(defrule comprobacionLluviaInferior
+	(declare (salience -7))
+	?var1 <- (regarPlanta ?planta ?val)
+	(riegoEscaso)
+	(Lluvia prediccion ?intensidad)
+	=>
+	(retract ?var1)
+	(printout t "La planta " ?planta " tiene un valor alto de humedad (necesita ser regada). " crlf
+				"Como se prevee una lluvia de intensidad " ?intensidad ", se regara de forma ligera." crlf)
+	(assert (activarRiego ?planta))
+)
+
+
+(defrule comprobacionLluviaSuperior
+	(declare (salience -7))
+	?var1 <- (regarPlanta ?planta ?val)
+	(riegoNulo)
+	(Lluvia prediccion ?intensidad)
+	=>
+	(retract ?var1)
+	(printout t "La planta " ?planta " tiene un valor alto de humedad (necesita ser regada). " crlf
+				"Como se prevee una lluvia de intensidad " ?intensidad ", no se va a ragar." crlf)
+)
+
+
+(defrule borrarRiegoEscaso
+	?var1 <- (Lluvia prediccion ?intensidad)
+	?var2 <- (Lluvia prediccion 0)
+	?var3 <- (riegoEscaso)
+	=>
+	(retract ?var1)
+	(retract ?var2)
+	(retract ?var3)
+)
+
+(defrule borrarRiegoNormal
+	?var1 <- (Lluvia prediccion ?intensidad)
+	?var2 <- (Lluvia prediccion 0)
+	?var3 <- (riegoNormal)
+	=>
+	(retract ?var1)
+	(retract ?var2)
+	(retract ?var3)
+)
+
+(defrule borrarRiegoEscaso
+	?var1 <- (Lluvia prediccion ?intensidad)
+	?var2 <- (Lluvia prediccion 0)
+	?var3 <- (riegoNulo)
+	=>
+	(retract ?var1)
+	(retract ?var2)
+	(retract ?var3)
+)

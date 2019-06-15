@@ -79,3 +79,13 @@
 (datosensor 23 humedad cactus 1010)
 (datosensor 24 humedad verduras 710)
 (datosensor 25 humedad flores 700)
+
+(datosensor 26 humedad cactus 700)
+(datosensor 26 humedad verduras 400)
+(datosensor 26 humedad flores 350)
+
+
+(datosensor 27 Lluvia prediccion 10)
+(datosensor 28 humedad cactus 600)
+(datosensor 29 humedad verduras 510)
+(datosensor 30 humedad flores 400)
