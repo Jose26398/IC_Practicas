@@ -2,28 +2,80 @@
 ;;; al salon
 (datoactivo 1)
 
-(datosensor 1 temperatura cactus 25)
-(datosensor 2 temperatura verduras 25)
-(datosensor 3 temperatura flores 25)
 
-(datosensor 4 luminosidad cactus 800)
+; Por la mañana, lux 500, y temperaturas normales, de 25 grados (por defecto)
+
+; Los sensores de humedad se activan. Realiza riego normal de todos los tiestos
+(datosensor 1 humedad cactus 900)
+(datosensor 2 humedad verduras 600)
+(datosensor 3 humedad flores 550)
+
+; Se desactivan cuando alcancen la humedad deseada
+(datosensor 4 humedad cactus 700)
+(datosensor 4 humedad verduras 400)
+(datosensor 4 humedad flores 350)
+
+
+
+; Por la tarde, lux 800, y temperaturas un poco altas, de 32 grados
+(datosensor 5 luminosidad cactus 800)
 (datosensor 5 luminosidad verduras 800)
-(datosensor 6 luminosidad flores 800)
+(datosensor 5 luminosidad flores 800)
 
+(datosensor 6 temperatura cactus 28)
+(datosensor 6 temperatura verduras 28)
+(datosensor 6 temperatura flores 28)
 
-; Realizar riego normal de todos los tiestos
+; Los sensores de humedad se activan. Se posponen los riegos para ahorrar agua por evaporacion
 (datosensor 7 humedad cactus 900)
-(datosensor 8 humedad verduras 600)
-(datosensor 9 humedad flores 550)
+(datosensor 7 humedad verduras 600)
+(datosensor 7 humedad flores 550)
+
+; Por la noche, lux 80, se activarían los riegos pospuestos
+(datosensor 8 luminosidad cactus 80)
+(datosensor 9 luminosidad verduras 80)
+(datosensor 10 luminosidad flores 80)
+
+; Se desactivan cuando alcancen la humedad deseada
+(datosensor 11 humedad cactus 700)
+(datosensor 11 humedad verduras 400)
+(datosensor 11 humedad flores 350)
 
 
 
-; Subimos temperatura y vemos como se activa el vaporizador (solo en las flores)
-(datosensor 10 temperatura cactus 37)
-(datosensor 11 temperatura verduras 37)
-(datosensor 12 temperatura flores 37)
+; Ahora veamos que sucede si se pospone por luminosidad y las plantas adquieren
+; un valor de humedad críticamente bajo
 
-; Volvemos a regar (activamos manualmente)
+; Subimos la luminosidad
+(datosensor 12 luminosidad cactus 1000)
+(datosensor 12 luminosidad verduras 1000)
+(datosensor 12 luminosidad flores 1000)
+
+; Los sensores de humedad se activan. Se posponen los riegos para ahorrar agua por evaporacion
 (datosensor 13 humedad cactus 900)
 (datosensor 14 humedad verduras 600)
 (datosensor 15 humedad flores 550)
+
+; Pero superan sus niveles críticos de humedad
+(datosensor 16 humedad cactus 1010)
+(datosensor 17 humedad verduras 710)
+(datosensor 18 humedad flores 700)
+
+; Se desactivan cuando alcancen la humedad deseada
+(datosensor 19 humedad cactus 700)
+(datosensor 19 humedad verduras 400)
+(datosensor 19 humedad flores 350)
+
+
+
+; Veamos cómo se activan los vaporizadores y se combinan con el riego en situaciones críticas
+; de altas temperaturas y luminosidad
+
+; Subimos temperatura y vemos como se activa el vaporizador (flores y verduras)
+(datosensor 20 temperatura cactus 42)
+(datosensor 21 temperatura verduras 42)
+(datosensor 22 temperatura flores 42)
+
+(datosensor 23 humedad cactus 1010)
+(datosensor 24 humedad verduras 710)
+(datosensor 25 humedad flores 700)
