@@ -1,6 +1,6 @@
 ;;; Persona sola en salon desde las 10 hasta las 11:10, sale a las 11:10 al  pasillo y despues a la cocina donde permanece hasta las 11:30 y vuelve
 ;;; al salon
-(datoactivo 27)
+(datoactivo 1)
 
 
 ; Por la mañana, lux 500, y temperaturas normales, de 25 grados (por defecto)
@@ -88,59 +88,68 @@
 (datosensor 26 humedad flores 350)
 
 
+; Quitamos las condiciones extremas para ver las lluvias
+(datosensor 27 luminosidad cactus 500)
+(datosensor 27 luminosidad verduras 500)
+(datosensor 27 luminosidad flores 500)
+(datosensor 27 temperatura cactus 32)
+(datosensor 27 temperatura verduras 32)
+(datosensor 27 temperatura flores 32)
+
+
 
 ; Gestión del riego con lluvias
 
 ; Se predice una lluvia de 4 mm/h
-(datosensor 27 lluvia prediccion 4)
+(datosensor 28 lluvia prediccion 4)
 
 ; Y se leen los datos de los sensores de humedad de cada una de las plantas
 ; suponiendo que ya han llegado a su minimo ideal y necesitan ser regadas
-(datosensor 28 humedad cactus 900)
-(datosensor 29 humedad verduras 600)
-(datosensor 30 humedad flores 550)
+(datosensor 29 humedad cactus 900)
+(datosensor 30 humedad verduras 600)
+(datosensor 31 humedad flores 550)
 
 ; No se prevee mas lluvia
-(datosensor 31 lluvia prediccion 0)
+(datosensor 32 lluvia prediccion 0)
 
 ; Dejamos de regar si los sensores detectan la humedad ideal sensores de humedad
-(datosensor 32 humedad cactus 700)
-(datosensor 33 humedad verduras 400)
-(datosensor 34 humedad flores 350)
+(datosensor 33 humedad cactus 700)
+(datosensor 34 humedad verduras 400)
+(datosensor 35 humedad flores 350)
 
 
 ; Ahora se predice una lluvia de 10 mm/h
-(datosensor 35 lluvia prediccion 10)
+(datosensor 36 lluvia prediccion 10)
 
 ; Y se leen los datos de los sensores de humedad de cada una de las plantas
 ; suponiendo que ya han llegado a su minimo ideal y necesitan ser regadas
-(datosensor 36 humedad cactus 900)
-(datosensor 36 humedad verduras 600)
-(datosensor 36 humedad flores 550)
+(datosensor 37 humedad cactus 900)
+(datosensor 37 humedad verduras 600)
+(datosensor 37 humedad flores 550)
 
 ; La lluvia termina
-(datosensor 37 lluvia prediccion 0)
+(datosensor 38 lluvia prediccion 0)
 
 ; Dejamos de regar si los sensores detectan la humedad ideal
-(datosensor 38 humedad cactus 700)
-(datosensor 38 humedad verduras 400)
-(datosensor 38 humedad flores 350)
+(datosensor 39 humedad cactus 700)
+(datosensor 39 humedad verduras 400)
+(datosensor 39 humedad flores 350)
 
 
 ; Ahora se predice una lluvia de 60 mm/h
-(datosensor 39 lluvia prediccion 60)
+(datosensor 40 lluvia prediccion 60)
 
 ; Y se leen los datos de los sensores de humedad de cada una de las plantas
 ; suponiendo que ya han llegado a su minimo ideal y necesitan ser regadas
 ; Aqui también se incluye una situación crítica para que veamos como el sistema también responde
-(datosensor 40 humedad cactus 900)
-(datosensor 40 humedad verduras 800)
-(datosensor 40 humedad flores 550)
+(datosensor 41 humedad cactus 900)
+(datosensor 41 humedad verduras 800)
+(datosensor 41 humedad flores 550)
 
 ; La lluvia termina
-(datosensor 41 lluvia prediccion 0)
+(datosensor 42 lluvia prediccion 0)
 
 ; La lluvia hace que la humedad de las plantas baje
-(datosensor 42 humedad cactus 500)
-(datosensor 42 humedad verduras 300)
-(datosensor 42 humedad flores 250)
+(datosensor 43 humedad cactus 500)
+(datosensor 43 humedad verduras 150)
+(datosensor 43 humedad flores 300)
