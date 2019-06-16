@@ -1,4 +1,4 @@
-; PRACTICAS INGENIERIA DEL CONOCIMIENTO 2018/19
+; PRACTICA FINAL INGENIERIA DEL CONOCIMIENTO 2018/19
 ; AUTOR: José Maria Sánchez Guerrero
 
 
@@ -80,7 +80,7 @@
 
 (defrule cargardatosasimular
 =>
-(load-facts DatosSimulados.txt) 
+(load-facts DatosSimulados2.txt) 
 )
 
 
@@ -196,6 +196,16 @@
 
 
 
+(defrule asignarLLuvia
+	?var1 <- (valor lluvia prediccion ?intensidad & ~0)
+	?var2 <- (valor lluvia prediccion 0)
+	=> 
+	(retract ?var1)
+	(retract ?var2)
+	(printout t "Ya no hay prevision de lluvia para las proximas horas. " crlf)
+	(assert (borrarRiegosPrevistos))
+)
+
 
 ; ------------------------------------------------------------------------------------------------- ;
 
@@ -219,14 +229,13 @@
 
 (defrule desactivarRiego
 	(declare (salience 1))
-	?var1 <- (valor humedad ?planta ?valor)
+	(valor humedad ?planta ?valor)
 	?var2 <- (activarRiego ?planta)
 	?var3 <- (riego ?planta on)
 	=>
-	(retract ?var1)
 	(retract ?var2)
 	(retract ?var3)
-	(printout t "Humedad deseada alcanzada. Se descativa el riego de " ?planta crlf)
+	(printout t "Humedad deseada alcanzada. Se desactiva el riego de " ?planta crlf)
 	(assert (riego ?planta off))
 )
 
@@ -235,7 +244,7 @@
 ; ------------------------------------------------------------------------------------------------- ;
 
 (defrule humedadCritica
-	(declare (salience -1))
+	(declare (salience 50))
 	?var <- (regarPlanta ?planta ?val)
 	(hideal ?planta ?min ?max)
 	(test (> ?val (+ ?max 100)))
@@ -353,37 +362,13 @@
 
 
 
-; (defrule comprobarLluviaLigera
-; 	(declare (salience -70))
-; 	(Lluvia prediccion ?intensidad)
-; 	(humedad ?planta ?h)
-; 	(hideal ?planta ?min ?max)
-; 	(test (< ?intensidad 6.5) )
-; 	(test (and (> ?h ?min) (< ?h ?max)))
-; 	=>
-; 	(retract ?var)
-; 	(printout t "No se activara el riego para " ?planta " porque se prevee poca lluvia." crlf)
-; )
-
-; (defrule comprobarLluviaModerada
-; 	(declare (salience -70))
-; 	(Lluvia prediccion ?intensidad)
-; 	(humedad ?planta ?h)
-; 	(hideal ?planta ?min ?max)
-; 	(test (and (>= ?intensidad 6.5) (< ?intensidad 15)) )
-; 	(test (and (>= ?h ?min) (< ?h ?max)))
-; 	=>
-; 	(retract ?var)
-; 	(printout t "Se ha cumplido le prevision de lluvia, por lo que no hace falta regar " ?planta "." crlf)
-; )
-
 
 
 (defrule riegoNormalPorLluviaLigera
 	(declare (salience -70))
-	(humedad ?planta ?h)
-	(hideal ?planta ?min ?max)
-	(Lluvia prediccion ?intensidad)
+	(Tiesto ?planta)
+	(valor lluvia prediccion ?intensidad)
+	(riego ?planta off)
 	(test (< ?intensidad 6.5))
 	=>
 	(printout t "Se prepara un riego normal (si lo necesita) para la planta " ?planta " porque se prevee una lluvia ligera." crlf)
@@ -394,7 +379,8 @@
 (defrule riegoEscasoPorLluviaModerada
 	(declare (salience -70))
 	(Tiesto ?planta)
-	(Lluvia prediccion ?intensidad)
+	(valor lluvia prediccion ?intensidad)
+	(riego ?planta off)
 	(test (and (>= ?intensidad 6.5) (< ?intensidad 15)) )
 	=>
 	(printout t "Se prepara un riego escaso (si lo necesita) para la planta " ?planta " porque se prevee una lluvia moderada." crlf)
@@ -405,11 +391,12 @@
 (defrule riegoNuloPorLluviaTorrencial
 	(declare (salience -70))
 	(Tiesto ?planta)
-	?var2 <- (Lluvia prediccion ?intensidad)
+	(valor lluvia prediccion ?intensidad)
+	(riego ?planta off)
 	(test (>= ?intensidad 15) )
 	=>
 	(printout t "No se regara la planta " ?planta " porque se prevee una lluvia intensa." crlf)
-	(assert (riegoNulo))
+	(assert (riegoNulo ?planta))
 )
 
 
@@ -419,11 +406,11 @@
 	(declare (salience -7))
 	?var1 <- (regarPlanta ?planta ?val)
 	(riegoNormal)
-	(Lluvia prediccion ?intensidad)
+	(valor lluvia prediccion ?intensidad)
 	=>
 	(retract ?var1)
 	(printout t "La planta " ?planta " tiene un valor alto de humedad (necesita ser regada). " crlf
-				"Como se prevee una lluvia de intensidad " ?intensidad ", se regará de forma normal." crlf)
+				"Como se prevee una lluvia de intensidad " ?intensidad ", se regara de forma normal." crlf)
 	(assert (activarRiego ?planta))
 )
 
@@ -432,7 +419,7 @@
 	(declare (salience -7))
 	?var1 <- (regarPlanta ?planta ?val)
 	(riegoEscaso)
-	(Lluvia prediccion ?intensidad)
+	(valor lluvia prediccion ?intensidad)
 	=>
 	(retract ?var1)
 	(printout t "La planta " ?planta " tiene un valor alto de humedad (necesita ser regada). " crlf
@@ -444,41 +431,40 @@
 (defrule comprobacionLluviaSuperior
 	(declare (salience -7))
 	?var1 <- (regarPlanta ?planta ?val)
-	(riegoNulo)
-	(Lluvia prediccion ?intensidad)
+	(riegoNulo ?planta)
+	(valor lluvia prediccion ?intensidad)
 	=>
 	(retract ?var1)
 	(printout t "La planta " ?planta " tiene un valor alto de humedad (necesita ser regada). " crlf
-				"Como se prevee una lluvia de intensidad " ?intensidad ", no se va a ragar." crlf)
+				"Como se prevee una lluvia de intensidad " ?intensidad ", no se va a regar." crlf)
 )
 
 
 (defrule borrarRiegoEscaso
-	?var1 <- (Lluvia prediccion ?intensidad)
-	?var2 <- (Lluvia prediccion 0)
-	?var3 <- (riegoEscaso)
+	(declare (salience 2))
+	?var1 <- (borrarRiegosPrevistos)
+	?var2 <- (riegoEscaso)
 	=>
 	(retract ?var1)
-	(retract ?var2)
-	(retract ?var3)
+	(do-for-all-facts ((?var riegoEscaso)) (retract ?var))
 )
 
 (defrule borrarRiegoNormal
-	?var1 <- (Lluvia prediccion ?intensidad)
-	?var2 <- (Lluvia prediccion 0)
-	?var3 <- (riegoNormal)
+	(declare (salience 2))
+	?var1 <- (borrarRiegosPrevistos)
+	?var2 <- (riegoNormal)
 	=>
 	(retract ?var1)
-	(retract ?var2)
-	(retract ?var3)
+	(do-for-all-facts ((?var riegoNormal)) (retract ?var))
 )
 
-(defrule borrarRiegoEscaso
-	?var1 <- (Lluvia prediccion ?intensidad)
-	?var2 <- (Lluvia prediccion 0)
-	?var3 <- (riegoNulo)
+(defrule borrarRiegoNulo
+	(declare (salience 2))
+	?var1 <- (borrarRiegosPrevistos)
+	?var2 <- (riegoNulo)
 	=>
 	(retract ?var1)
-	(retract ?var2)
-	(retract ?var3)
+	(do-for-all-facts ((?var riegoNulo)) (retract ?var))
 )
+
+
