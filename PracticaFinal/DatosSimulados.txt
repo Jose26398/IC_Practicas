@@ -1,5 +1,3 @@
-;;; Persona sola en salon desde las 10 hasta las 11:10, sale a las 11:10 al  pasillo y despues a la cocina donde permanece hasta las 11:30 y vuelve
-;;; al salon
 (datoactivo 1)
 
 

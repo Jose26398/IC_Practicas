@@ -318,8 +318,10 @@
 (defrule desactivarRiego
 	(declare (salience 1))
 	(valor humedad ?planta ?valor)
+	(hideal ?planta ?min ?max)
 	?var1 <- (activarRiego ?planta)
 	?var2 <- (riego ?planta on)
+	(test (>= ?min ?valor))
 	=>
 	(retract ?var1)
 	(retract ?var2)
@@ -699,7 +701,7 @@
 ; Como ya he dicho anteriormente, estas reglas no modifican la humedad de la planta, ya que es el
 ; propio sensor de humedad el que nos tiene que decir su verdadero valor. Estos datos de sensores
 ; tienen que ser insertados manualmente, por lo que el no hacerlo correctamente puede llevar a
-; que el sistema falle. Por ejemplo, si se ejecutan estas reglas que predicen lluvia, regamos y no
+; que el sistema falle. Por ejemplo, si se ejecutan estas reglas que predicen lluvia, regamos y
 ; el sensor de humedad no ha cambiado, no tendría sentido.
 ; Para que no haya fallos, puede ver y ejecutarlo con DatosSimulados.txt. No obstante, se permite
 ; su uso manualmente, pero hay que hacerlo coherentemente.
