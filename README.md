@@ -26,3 +26,5 @@ El formato utilizado es el mismo, asi que no debería de haber problema con otro
 6- Por último, también he añadido un plano de cómo es la casa.
 
 -------------------------------------------------------------------------------
+
+Práctica final explicada en la memoria.
